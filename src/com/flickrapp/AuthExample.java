@@ -175,7 +175,7 @@ public class AuthExample {
 			frameest.dispose();
 			frameint.remove(authenticatebutt);
 			PhotoPanel = new JPanel();
-			PhotoPanel.setLayout(new GridLayout(5,5));
+			PhotoPanel.setLayout(new GridLayout(7,7));
 			frameint.add(PhotoPanel);
 			retrieveUserPhotos();
 			frameint.setSize(900, 900);
@@ -183,13 +183,12 @@ public class AuthExample {
 	}
 
 	private void retrieveUserPhotos() throws IOException, SAXException, FlickrException {
-		PhotoList plist = f.getPhotosetsInterface().getPhotos("72157600023924609", 20, 1);
+		PhotoList plist = f.getPhotosetsInterface().getPhotos("72157600023924609", 25, 1);
 		for (Iterator iterator = plist.iterator(); iterator.hasNext();) 
 		{
 		    Photo photo = (Photo) iterator.next();
-		    String photo_id = photo.getTitle();
-		    JLabel photo_id1 = new JLabel(new ImageIcon(photo.getSmallImage()));
-		    PhotoPanel.add(photo_id1);
+		    JLabel photo_label = new JLabel(new ImageIcon(photo.getThumbnailImage()));
+		    PhotoPanel.add(photo_label);
 		}
 		
 	}
