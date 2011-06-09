@@ -8,7 +8,6 @@ import java.util.AbstractList;
 import java.util.Iterator;
 import java.util.Properties;
 import javax.xml.parsers.ParserConfigurationException;
-
 import org.xml.sax.SAXException;
 import com.aetrion.flickr.Flickr;
 import com.aetrion.flickr.FlickrException;
@@ -52,12 +51,12 @@ public class AuthExample {
     protected Properties property;
     protected JButton authenticatebutt;
     protected JPanel ButtonsPanel; 
-    protected JPanel NewPanel;
+    protected JPanel PhotoPanel;
     
 	private void startestUI() {
 		frameest = new JFrame("FlickrAuthentication");
         frameest.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        frameest.setSize(800, 700);
+        frameest.setSize(800, 600);
         frameest.setLocationByPlatform(true);
         frameest.setVisible(true);
 	}
@@ -175,8 +174,9 @@ public class AuthExample {
 	{
 			frameest.dispose();
 			frameint.remove(authenticatebutt);
-			GridLayout gridlayout = new GridLayout(4,5);
-			
+			PhotoPanel = new JPanel();
+			PhotoPanel.setLayout(new GridLayout(5,5));
+			frameint.add(PhotoPanel);
 			retrieveUserPhotos();
 			frameint.setSize(900, 900);
 			frameint.setVisible(true);	
@@ -189,9 +189,8 @@ public class AuthExample {
 		    Photo photo = (Photo) iterator.next();
 		    String photo_id = photo.getTitle();
 		    JLabel photo_id1 = new JLabel(new ImageIcon(photo.getSmallImage()));
-		    frameint.add(photo_id1);
+		    PhotoPanel.add(photo_id1);
 		}
-	
 		
 	}
 
