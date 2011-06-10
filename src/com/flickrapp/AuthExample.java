@@ -1,10 +1,8 @@
 package com.flickrapp;
 
-import java.io.ByteArrayOutputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.URL;
-import java.util.AbstractList;
 import java.util.Iterator;
 import java.util.Properties;
 import javax.xml.parsers.ParserConfigurationException;
@@ -29,6 +27,7 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 import chrriis.common.UIUtils;
 import chrriis.dj.nativeswing.swtimpl.NativeInterface;
@@ -50,13 +49,17 @@ public class AuthExample {
     protected JWebBrowser webBrowser;
     protected Properties property;
     protected JButton authenticatebutt;
-    protected JPanel ButtonsPanel; 
+    protected JPanel ButtonsPanel;
+    protected JPanel SetIdPanel;
     protected JPanel PhotoPanel;
+    protected JButton search_set;
+    protected JTextField set_id;
     
 	private void startestUI() {
 		frameest = new JFrame("FlickrAuthentication");
+		frameest.setLayout(new BorderLayout());
         frameest.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        frameest.setSize(800, 600);
+        frameest.setSize(900, 900);
         frameest.setLocationByPlatform(true);
         frameest.setVisible(true);
 	}
@@ -66,7 +69,7 @@ public class AuthExample {
 	    webBrowser = new JWebBrowser();
 	    webBrowser.navigate(web_url);
 	    webBrowserPanel.add(webBrowser, BorderLayout.CENTER);
-	    frameest.add(webBrowserPanel);
+	    frameest.add(webBrowserPanel, BorderLayout.CENTER);
 	  }
     
     public void initGUI() {
@@ -75,12 +78,13 @@ public class AuthExample {
 	    SwingUtilities.invokeLater(new Runnable() {
 	      public void run() {
 	        frameint = new JFrame("FlickrApp");
+	        frameint.setLayout(new BorderLayout());
 	        frameint.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-	        frameint.setSize(900, 900);
+	        frameint.setSize(1200, 950);
 	        frameint.setLocationByPlatform(true);
 	        frameint.setVisible(true);
 	        authenticatebutt = new JButton("Authenticate");
-	        authenticatebutt.setSize(200, 100);
+	        authenticatebutt.setSize(300, 300);
 	        frameint.add(authenticatebutt, BorderLayout.CENTER);
 	        
 	        authenticatebutt.addMouseListener(new MouseAdapter() {
@@ -122,7 +126,7 @@ public class AuthExample {
         ButtonsPanel = new JPanel();
         ButtonsPanel.add(authenticate);
         ButtonsPanel.add(done);
-        frameest.add(ButtonsPanel);
+        frameest.add(ButtonsPanel, BorderLayout.PAGE_START);
 
         authenticate.addMouseListener(new MouseAdapter() {
             public void mouseClicked(MouseEvent e) {
@@ -174,23 +178,53 @@ public class AuthExample {
 	{
 			frameest.dispose();
 			frameint.remove(authenticatebutt);
+			
+			SetIdPanel = new JPanel();
+			set_id = new JTextField(20);
+			search_set = new JButton ("Search set");
+			SetIdPanel.add(set_id);
+			SetIdPanel.add(search_set);
 			PhotoPanel = new JPanel();
-			PhotoPanel.setLayout(new GridLayout(7,7));
-			frameint.add(PhotoPanel);
-			retrieveUserPhotos();
-			frameint.setSize(900, 900);
-			frameint.setVisible(true);	
-	}
+			PhotoPanel.setLayout(new GridLayout(8,8));
 
-	private void retrieveUserPhotos() throws IOException, SAXException, FlickrException {
-		PhotoList plist = f.getPhotosetsInterface().getPhotos("72157600023924609", 25, 1);
-		for (Iterator iterator = plist.iterator(); iterator.hasNext();) 
+			frameint.add(SetIdPanel, BorderLayout.PAGE_START);
+			frameint.add(PhotoPanel, BorderLayout.CENTER);
+			frameint.setSize(1200, 950);
+			frameint.setVisible(true);	
+			
+			search_set.addMouseListener(new MouseAdapter() {
+                public void mouseClicked(MouseEvent e) {
+                	String setid = set_id.getText();
+                	try {
+						retrieveUserSetPhotos(setid);
+					} catch (IOException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					} catch (SAXException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					} catch (FlickrException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
+                }	
+             });           
+	}
+	
+	//test set-id 72157622188533686(51 photos) 72157624217683640(26 photos) 72157612875234265(191 photos)
+	private void retrieveUserSetPhotos(String setid) throws IOException, SAXException, FlickrException {
+		PhotoList plist = f.getPhotosetsInterface().getPhotos(setid, 60, 1);
+	    PhotoPanel.removeAll();
+	    PhotoPanel.repaint();
+		for (@SuppressWarnings("rawtypes")
+		Iterator iterator = plist.iterator(); iterator.hasNext();) 
 		{
 		    Photo photo = (Photo) iterator.next();
-		    JLabel photo_label = new JLabel(new ImageIcon(photo.getThumbnailImage()));
+		    @SuppressWarnings("deprecation")
+			JLabel photo_label = new JLabel(new ImageIcon(photo.getThumbnailImage()));
 		    PhotoPanel.add(photo_label);
 		}
-		
+		frameint.setVisible(true);	
 	}
 
 	public static void main(String[] args) throws ParserConfigurationException 
